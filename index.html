@@ -376,7 +376,9 @@ function renderPick(p) {
   var sigEntries = [
     ['Line move',   sigs.line_movement || 0],
     ['Fade public', sigs.fade_public   || 0],
-    ['Juice value', sigs.juice_value   || 0]
+    ['Juice value', sigs.juice_value   || 0],
+    ['Weather',     sigs.weather       || 0],
+    ['Prop signal', sigs.prop_signal   || 0]
   ];
   var sigBars = '';
   for (var si = 0; si < sigEntries.length; si++) {
@@ -400,7 +402,9 @@ function renderPick(p) {
   var whyText = {
     line_movement: 'Sharp line movement: the line has shifted toward this side since opening, suggesting professional money is backing it.',
     fade_public:   'Fading the public: heavy public money is on the other side. Books shade lines for casual bettors, creating value against the crowd.',
-    juice_value:   'Juice value: the vig on this pick is favorable compared to the rest of the slate, meaning you are paying less for the same bet.'
+    juice_value:   'Juice value: the vig on this pick is favorable compared to the rest of the slate, meaning you are paying less for the same bet.',
+    weather:       'Weather angle: game-time conditions such as wind, rain, or cold temperatures favor this side based on historical scoring patterns.',
+    prop_signal:   'Prop signal: player prop lines for this game suggest a scoring environment that favors this side of the bet.'
   };
   var whyPick = whyText[topSig] || whyText.juice_value;
 
