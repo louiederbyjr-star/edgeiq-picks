@@ -28,9 +28,7 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
 .nav-tabs{display:flex;gap:4px;background:var(--ink3);border-radius:10px;padding:3px}
 .nav-tab{padding:6px 16px;border-radius:8px;font-size:13px;cursor:pointer;color:var(--text2);border:none;background:transparent;font-family:var(--ff-body);transition:all .15s}
 .nav-tab.active{background:var(--lime);color:var(--ink);font-weight:500}
-.nav-right{font-size:11px;color:var(--text3);font-family:var(--ff-mono);display:flex;align-items:center;gap:6px}
-.nav-record{color:var(--lime);font-weight:500;font-size:12px}
-.nav-record-label{color:var(--text3);font-size:10px;letter-spacing:.5px;text-transform:uppercase}
+.nav-right{font-size:12px;color:var(--text3);font-family:var(--ff-mono)}
 
 /* ── layout ── */
 .page{display:none;padding:20px 16px 80px;max-width:620px;margin:0 auto}
@@ -89,11 +87,25 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
 .tip-icon{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.12);color:var(--text3);font-size:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-style:normal;line-height:1}
 .tip-box{display:none;position:fixed;background:var(--ink);border:0.5px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text2);width:210px;line-height:1.5;z-index:999;pointer-events:none;font-family:var(--ff-body);font-weight:400;text-transform:none;letter-spacing:0;box-shadow:0 4px 20px rgba(0,0,0,.4)}
 .tip-wrap:hover .tip-box{display:block}
-.pick-signals{padding:10px 14px;border-top:0.5px solid var(--border);display:flex;gap:8px;flex-wrap:wrap}
-.sig-bar-wrap{flex:1;min-width:120px}
-.sig-label{font-size:10px;color:var(--text3);margin-bottom:4px;font-family:var(--ff-mono)}
-.sig-bar-bg{height:4px;background:var(--ink4);border-radius:2px;overflow:hidden}
-.sig-bar{height:100%;border-radius:2px;transition:width .8s ease}
+.pick-signals{padding:12px 16px;border-top:0.5px solid var(--border);display:flex;flex-direction:column;gap:10px}
+.sig-chips{display:flex;flex-wrap:wrap;gap:6px}
+.sig-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-family:var(--ff-mono);font-weight:500;border:0.5px solid}
+.sig-chip.strong{background:rgba(200,241,53,.15);border-color:rgba(200,241,53,.3);color:var(--lime)}
+.sig-chip.medium{background:rgba(46,219,176,.1);border-color:rgba(46,219,176,.2);color:var(--teal)}
+.sig-chip.weak{background:rgba(255,255,255,.05);border-color:var(--border2);color:var(--text2)}
+.sig-chip-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.sig-chip.strong .sig-chip-dot{background:var(--lime)}
+.sig-chip.medium .sig-chip-dot{background:var(--teal)}
+.sig-chip.weak .sig-chip-dot{background:var(--text3)}
+.sig-breakdown{display:flex;flex-direction:column;gap:5px}
+.sig-row{display:flex;align-items:center;gap:8px}
+.sig-row-label{font-size:10px;color:var(--text3);font-family:var(--ff-mono);width:90px;flex-shrink:0}
+.sig-row-bar{flex:1;height:3px;background:var(--ink4);border-radius:2px;overflow:hidden}
+.sig-row-fill{height:100%;border-radius:2px;transition:width .8s ease}
+.sig-row-val{font-size:10px;color:var(--text3);font-family:var(--ff-mono);width:28px;text-align:right;flex-shrink:0}
+.sig-toggle{font-size:10px;color:var(--text3);cursor:pointer;font-family:var(--ff-mono);background:none;border:none;padding:0;margin-top:2px;text-align:left}
+.sig-toggle:hover{color:var(--text2)}
+.sig-breakdown.hidden{display:none}
 .pick-result-strip{padding:10px 16px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .result-badge{font-size:12px;font-family:var(--ff-mono);font-weight:500;padding:3px 12px;border-radius:20px}
 .result-win{background:var(--teal-bg);color:var(--teal)}
@@ -184,10 +196,7 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
     <button class="nav-tab" onclick="showPage('leaderboard',this)">Board</button>
     <button class="nav-tab" onclick="showPage('submit',this)">Submit</button>
   </div>
-  <div class="nav-right">
-    <span class="nav-record" id="nav-record">—</span>
-    <span class="nav-record-label" id="nav-record-label"></span>
-  </div>
+  <div class="nav-right" id="win-rate-nav">—</div>
 </nav>
 
 <!-- ══ PICKS PAGE ══════════════════════════════════════════════ -->
@@ -378,21 +387,53 @@ function renderPick(p) {
   if (p.result === 'push') resultHtml = '<span class="result-badge result-push">&#8212; PUSH</span>';
 
   // signal bars
-  var sigEntries = [
-    ['Line move',   sigs.line_movement || 0],
-    ['Fade public', sigs.fade_public   || 0],
-    ['Juice value', sigs.juice_value   || 0],
-    ['Weather',     sigs.weather       || 0],
-    ['Prop signal', sigs.prop_signal   || 0]
-  ];
-  var sigBars = '';
-  for (var si = 0; si < sigEntries.length; si++) {
-    sigBars += '<div class="sig-bar-wrap">'
-      + '<div class="sig-label">' + sigEntries[si][0] + '</div>'
-      + '<div class="sig-bar-bg"><div class="sig-bar" style="width:'
-      + Math.round(sigEntries[si][1] * 100) + '%;background:var(--lime)"></div></div>'
+  // signal display — chips for strong signals + expandable breakdown
+  var SIG_META = {
+    line_movement: { label: 'Sharp money',   icon: '&#9651;', desc: 'Line moved toward this side — sharp bettors loading up' },
+    fade_public:   { label: 'Fade public',   icon: '&#128100;', desc: 'Public is heavy on the other side — books shade for casual money' },
+    juice_value:   { label: 'Value odds',    icon: '&#9675;', desc: 'Favorable vig — paying less than usual for this bet' },
+    weather:       { label: 'Weather edge',  icon: '&#127777;', desc: 'Game conditions favor this side historically' },
+    prop_signal:   { label: 'Prop signal',   icon: '&#128200;', desc: 'Player prop lines suggest a scoring environment that favors this pick' },
+    injury:        { label: 'Injury edge',   icon: '&#128138;', desc: 'Opponent has key players out or doubtful' },
+    book_disagree: { label: 'Book split',    icon: '&#9878;', desc: 'Books disagree on this line — market inefficiency detected' },
+    rest_days:     { label: 'Rest edge',     icon: '&#9200;', desc: 'This team has a rest advantage over their opponent' },
+    clv:           { label: 'Line value',    icon: '&#9650;', desc: 'Market has moved to validate this pick since opening' }
+  };
+
+  // build chips for signals above threshold
+  var chips = '';
+  var breakdownRows = '';
+  var sigKeys = Object.keys(SIG_META);
+  for (var sk = 0; sk < sigKeys.length; sk++) {
+    var key = sigKeys[sk];
+    var val = sigs[key] || 0;
+    var meta = SIG_META[key];
+    if (!meta) continue;
+    var chipClass = val >= 0.65 ? 'strong' : val >= 0.52 ? 'medium' : 'weak';
+    // only show chips for signals that are actually contributing
+    if (val >= 0.52) {
+      chips += '<span class="sig-chip ' + chipClass + '" title="' + meta.desc + '">'
+        + '<span class="sig-chip-dot"></span>'
+        + meta.icon + ' ' + meta.label
+        + '</span>';
+    }
+    // always show in breakdown
+    var fillColor = val >= 0.65 ? 'var(--lime)' : val >= 0.52 ? 'var(--teal)' : 'rgba(255,255,255,.2)';
+    breakdownRows += '<div class="sig-row">'
+      + '<div class="sig-row-label">' + meta.label + '</div>'
+      + '<div class="sig-row-bar"><div class="sig-row-fill" style="width:' + Math.round(val*100) + '%;background:' + fillColor + '"></div></div>'
+      + '<div class="sig-row-val">' + Math.round(val*100) + '</div>'
       + '</div>';
   }
+
+  if (!chips) {
+    chips = '<span class="sig-chip weak"><span class="sig-chip-dot"></span>Juice value</span>';
+  }
+
+  var sigId = 'sig-' + (pickId || Math.random().toString(36).slice(2));
+  var sigBars = '<div class="sig-chips">' + chips + '</div>'
+    + '<button class="sig-toggle" onclick="toggleSigBreakdown('' + sigId + '')">&#9660; show signal breakdown</button>'
+    + '<div class="sig-breakdown hidden" id="' + sigId + '">' + breakdownRows + '</div>';
 
   // why this pick
   var topSig = 'juice_value';
@@ -496,29 +537,18 @@ async function loadPicks() {
 // ── load overall win rate (all-time) ─────────────────────────
 async function loadWinRate() {
   try {
-    // pull graded picks directly from the picks table
     const _wr = await fetch(
-      SUPABASE_URL + '/rest/v1/picks?result=not.is.null&select=result',
+      SUPABASE_URL + '/rest/v1/leaderboard?select=result',
       { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
     );
     const data = await _wr.json();
     if (!data || !data.length) return;
-
     const wins   = data.filter(r => r.result === 'win').length;
-    const losses = data.filter(r => r.result === 'loss').length;
-    const pushes = data.filter(r => r.result === 'push').length;
-    const graded = wins + losses;
+    const graded = data.filter(r => r.result !== 'push').length;
     if (!graded) return;
-
-    const pct    = ((wins / graded) * 100).toFixed(1);
-    const record = wins + '-' + losses + (pushes > 0 ? '-' + pushes : '');
-
-    // update nav record
-    document.getElementById('nav-record').textContent = record;
-    document.getElementById('nav-record-label').textContent = pct + '%';
-
-    // update picks page pill
-    document.getElementById('overall-rate').textContent = record + ' (' + pct + '%)';
+    const pct = ((wins / graded) * 100).toFixed(1);
+    document.getElementById('overall-rate').textContent = pct + '% win rate';
+    document.getElementById('win-rate-nav').textContent  = pct + '%';
   } catch(_) {}
 }
 
@@ -896,6 +926,15 @@ document.addEventListener('click', function(e) {
     }, 2000);
   });
 });
+
+// ── signal breakdown toggle ──────────────────────────────────────────
+function toggleSigBreakdown(id) {
+  var el  = document.getElementById(id);
+  var btn = el ? el.previousElementSibling : null;
+  if (!el) return;
+  var hidden = el.classList.toggle('hidden');
+  if (btn) btn.innerHTML = hidden ? '&#9660; show signal breakdown' : '&#9650; hide breakdown';
+}
 
 // ── boot ──────────────────────────────────────────────────────
 loadPicks();
