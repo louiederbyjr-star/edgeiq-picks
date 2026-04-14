@@ -395,7 +395,7 @@ function renderPick(p) {
   var whyMap = {
     line_movement: '<strong>Sharp line movement</strong> — the line has shifted toward this side since opening, suggesting professional money is backing it.',
     fade_public:   '<strong>Fading the public</strong> — heavy public money is on the other side. Books shade lines for casual bettors, creating value against the crowd.',
-    juice_value:   '<strong>Juice value</strong> — the vig on this pick is favorable compared to the rest of today's slate, meaning you're paying less for the same bet.'
+    juice_value:   "The vig on this pick is favorable compared to the rest of today's slate, meaning you're paying less for the same bet."
   };
   var whyPick = whyMap[topSig] || whyMap.juice_value;
 
@@ -765,7 +765,7 @@ async function loadYesterday() {
 
 // ── share pick ────────────────────────────────────────────────
 function sharePick(btn, line, conf, edge) {
-  var text = 'EdgeIQ pick: ' + line + ' (' + conf + '% confidence, +' + edge + '% edge) — https://edgeiq.pages.dev/;
+  var text = 'EdgeIQ pick: ' + line + ' (' + conf + '% confidence, +' + edge + '% edge) — edgeiqpicks.netlify.app';
   navigator.clipboard.writeText(text).then(() => {
     btn.classList.add('copied');
     btn.textContent = '✓ Copied';
