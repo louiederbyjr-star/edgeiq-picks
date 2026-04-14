@@ -28,7 +28,9 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
 .nav-tabs{display:flex;gap:4px;background:var(--ink3);border-radius:10px;padding:3px}
 .nav-tab{padding:6px 16px;border-radius:8px;font-size:13px;cursor:pointer;color:var(--text2);border:none;background:transparent;font-family:var(--ff-body);transition:all .15s}
 .nav-tab.active{background:var(--lime);color:var(--ink);font-weight:500}
-.nav-right{font-size:12px;color:var(--text3);font-family:var(--ff-mono)}
+.nav-right{font-size:11px;color:var(--text3);font-family:var(--ff-mono);display:flex;align-items:center;gap:6px}
+.nav-record{color:var(--lime);font-weight:500;font-size:12px}
+.nav-record-label{color:var(--text3);font-size:10px;letter-spacing:.5px;text-transform:uppercase}
 
 /* ── layout ── */
 .page{display:none;padding:20px 16px 80px;max-width:620px;margin:0 auto}
@@ -79,14 +81,6 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
 .sport-pill{padding:5px 14px;border-radius:20px;border:0.5px solid var(--border2);font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--text2);transition:all .15s;font-family:var(--ff-body)}
 .sport-pill.on{background:var(--lime);color:var(--ink);border-color:var(--lime)}
 .countdown{font-size:11px;font-family:var(--ff-mono);color:var(--text3);margin-top:3px}
-.weather-row{display:flex;align-items:center;gap:5px;margin-top:4px;font-size:11px;font-family:var(--ff-mono);color:var(--text3)}
-.weather-pill{font-size:10px;padding:1px 7px;border-radius:20px;font-weight:500}
-.weather-pill.clear{background:rgba(200,241,53,.1);border:0.5px solid rgba(200,241,53,.2);color:var(--lime)}
-.weather-pill.cloudy{background:rgba(255,255,255,.06);border:0.5px solid var(--border2);color:var(--text2)}
-.weather-pill.windy{background:rgba(200,241,53,.15);border:0.5px solid rgba(200,241,53,.3);color:var(--lime)}
-.weather-pill.rain{background:rgba(46,219,176,.1);border:0.5px solid rgba(46,219,176,.2);color:var(--teal)}
-.weather-pill.snow{background:rgba(100,150,255,.1);border:0.5px solid rgba(100,150,255,.2);color:#7EB8FF}
-.weather-pill.extreme{background:rgba(255,90,90,.1);border:0.5px solid rgba(255,90,90,.2);color:var(--red)}
 .countdown.soon{color:var(--orange)}
 .countdown.live{color:var(--lime);font-weight:500}
 .share-btn:hover{border-color:rgba(200,241,53,.3);color:var(--lime)}
@@ -190,7 +184,10 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
     <button class="nav-tab" onclick="showPage('leaderboard',this)">Board</button>
     <button class="nav-tab" onclick="showPage('submit',this)">Submit</button>
   </div>
-  <div class="nav-right" id="win-rate-nav">—</div>
+  <div class="nav-right">
+    <span class="nav-record" id="nav-record">—</span>
+    <span class="nav-record-label" id="nav-record-label"></span>
+  </div>
 </nav>
 
 <!-- ══ PICKS PAGE ══════════════════════════════════════════════ -->
@@ -356,15 +353,6 @@ function fmtTime(iso) {
 }
 
 // ── render a single pick card ─────────────────────────────────
-function getWeatherDisplay(signals) {
-  var w = signals.weather || 0.5;
-  if (w <= 0.52) return null;
-  if (w >= 0.8)  return { icon: '&#10052;', label: 'Extreme cold/snow', cls: 'extreme' };
-  if (w >= 0.7)  return { icon: '&#127783;', label: 'Rain/storms', cls: 'rain' };
-  if (w >= 0.6)  return { icon: '&#128168;', label: 'Windy', cls: 'windy' };
-  return { icon: '&#9729;', label: 'Cloudy', cls: 'cloudy' };
-}
-
 function renderPick(p) {
   var conf    = p.confidence || 0;
   var ev      = p.ev || 0;
@@ -421,8 +409,8 @@ function renderPick(p) {
     fade_public:   'Fading the public: heavy public money is on the other side. Books shade lines for casual bettors, creating value against the crowd.',
     juice_value:   'Juice value: the vig on this pick is favorable compared to the rest of the slate, meaning you are paying less for the same bet.',
     weather:       'Weather angle: game-time conditions such as wind, rain, or cold temperatures favor this side based on historical scoring patterns.',
-    prop_signal:   'Prop signal: player prop lines suggest a scoring environment that favors this side of the bet.'
-  };;
+    prop_signal:   'Prop signal: player prop lines for this game suggest a scoring environment that favors this side of the bet.'
+  };
   var whyPick = whyText[topSig] || whyText.juice_value;
 
   // build html using an array and join — no quote nesting issues
@@ -435,13 +423,6 @@ function renderPick(p) {
   h.push('<div class="pick-line">' + escHtml(p.pick_line || '') + '</div>');
   h.push('<div class="pick-time">' + time + '</div>');
   h.push('<div class="countdown" id="cd-' + pickId + '" data-time="' + (p.game_time || '') + '">calculating...</div>');
-  var wx = getWeatherDisplay(sigs);
-  if (wx) {
-    h.push('<div class="weather-row">'
-      + '<span>' + wx.icon + '</span>'
-      + '<span class="weather-pill ' + wx.cls + '">' + wx.label + '</span>'
-      + '</div>');
-  }
   h.push('</div>');
   h.push('<div class="pick-right">');
   h.push('<div class="conf-ring-wrap" data-conf="' + conf.toFixed(0) + '" data-color="' + clr + '">');
@@ -515,18 +496,29 @@ async function loadPicks() {
 // ── load overall win rate (all-time) ─────────────────────────
 async function loadWinRate() {
   try {
+    // pull graded picks directly from the picks table
     const _wr = await fetch(
-      SUPABASE_URL + '/rest/v1/leaderboard?select=result',
+      SUPABASE_URL + '/rest/v1/picks?result=not.is.null&select=result',
       { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
     );
     const data = await _wr.json();
     if (!data || !data.length) return;
+
     const wins   = data.filter(r => r.result === 'win').length;
-    const graded = data.filter(r => r.result !== 'push').length;
+    const losses = data.filter(r => r.result === 'loss').length;
+    const pushes = data.filter(r => r.result === 'push').length;
+    const graded = wins + losses;
     if (!graded) return;
-    const pct = ((wins / graded) * 100).toFixed(1);
-    document.getElementById('overall-rate').textContent = pct + '% win rate';
-    document.getElementById('win-rate-nav').textContent  = pct + '%';
+
+    const pct    = ((wins / graded) * 100).toFixed(1);
+    const record = wins + '-' + losses + (pushes > 0 ? '-' + pushes : '');
+
+    // update nav record
+    document.getElementById('nav-record').textContent = record;
+    document.getElementById('nav-record-label').textContent = pct + '%';
+
+    // update picks page pill
+    document.getElementById('overall-rate').textContent = record + ' (' + pct + '%)';
   } catch(_) {}
 }
 
