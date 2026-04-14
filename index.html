@@ -349,115 +349,102 @@ function fmtTime(iso) {
 
 // ── render a single pick card ─────────────────────────────────
 function renderPick(p) {
-  const icon  = SPORT_ICONS[p.sport]  || SPORT_ICONS.default;
-  const color = SPORT_COLORS[p.sport] || SPORT_COLORS.default;
-  const conf  = p.confidence || 0;
-  const ev    = p.ev || 0;
-  const evClass = ev >= 0 ? 'ev-pos' : 'ev-neg';
-  const evStr   = (ev >= 0 ? '+' : '') + ev.toFixed(1);
-  const clr     = confColor(conf);
-  const r = 24, circ = 2 * Math.PI * r;
-  const dash   = (circ * (conf / 100)).toFixed(1);
-  const gap    = (circ - dash).toFixed(1);
-  const sport  = sportName(p.sport);
-  const time   = fmtTime(p.game_time);
-  const odds   = p.odds || 0;
-  const oddsStr = (odds > 0 ? '+' : '') + odds;
-  const books  = p.num_books || 0;
-  const pickId = p.id || '';
-  const pickLine = (p.pick_line || '').replace(/'/g, "\'");
+  var conf    = p.confidence || 0;
+  var ev      = p.ev || 0;
+  var evClass = ev >= 0 ? 'ev-pos' : 'ev-neg';
+  var evStr   = (ev >= 0 ? '+' : '') + ev.toFixed(1) + '%';
+  var clr     = confColor(conf);
+  var r       = 24;
+  var circ    = (2 * Math.PI * r).toFixed(1);
+  var gap     = (circ * (1 - conf/100)).toFixed(1);
+  var odds    = p.odds || 0;
+  var oddsStr = (odds > 0 ? '+' : '') + odds;
+  var icon    = SPORT_ICONS[p.sport]  || SPORT_ICONS.default;
+  var color   = SPORT_COLORS[p.sport] || SPORT_COLORS.default;
+  var sport   = sportName(p.sport);
+  var time    = fmtTime(p.game_time);
+  var pickId  = p.id || '';
+  var sigs    = p.signals || {};
 
   // result badge
   var resultHtml = '<span class="result-pending">Pending result</span>';
-  if (p.result === 'win')  resultHtml = '<span class="result-badge result-win">✓ WIN</span>';
-  if (p.result === 'loss') resultHtml = '<span class="result-badge result-loss">✗ LOSS</span>';
-  if (p.result === 'push') resultHtml = '<span class="result-badge result-push">— PUSH</span>';
+  if (p.result === 'win')  resultHtml = '<span class="result-badge result-win">&#10003; WIN</span>';
+  if (p.result === 'loss') resultHtml = '<span class="result-badge result-loss">&#10007; LOSS</span>';
+  if (p.result === 'push') resultHtml = '<span class="result-badge result-push">&#8212; PUSH</span>';
 
-  // signals
-  const sigs = p.signals || {};
-  const sigEntries = [
-    ['Line move',    sigs.line_movement || 0],
-    ['Fade public',  sigs.fade_public   || 0],
-    ['Juice value',  sigs.juice_value   || 0]
+  // signal bars
+  var sigEntries = [
+    ['Line move',   sigs.line_movement || 0],
+    ['Fade public', sigs.fade_public   || 0],
+    ['Juice value', sigs.juice_value   || 0]
   ];
   var sigBars = '';
-  sigEntries.forEach(function(s) {
+  for (var si = 0; si < sigEntries.length; si++) {
     sigBars += '<div class="sig-bar-wrap">'
-      + '<div class="sig-label">' + s[0] + '</div>'
-      + '<div class="sig-bar-bg"><div class="sig-bar" style="width:' + Math.round(s[1]*100) + '%;background:var(--lime)"></div></div>'
+      + '<div class="sig-label">' + sigEntries[si][0] + '</div>'
+      + '<div class="sig-bar-bg"><div class="sig-bar" style="width:'
+      + Math.round(sigEntries[si][1] * 100) + '%;background:var(--lime)"></div></div>'
       + '</div>';
-  });
+  }
 
   // why this pick
   var topSig = 'juice_value';
   var topVal = 0;
-  Object.keys(sigs).forEach(function(k) { if ((sigs[k]||0) > topVal) { topVal = sigs[k]; topSig = k; } });
-  var whyMap = {
-    line_movement: '<strong>Sharp line movement</strong> — the line has shifted toward this side since opening, suggesting professional money is backing it.',
-    fade_public:   '<strong>Fading the public</strong> — heavy public money is on the other side. Books shade lines for casual bettors, creating value against the crowd.',
-    juice_value:   "The vig on this pick is favorable compared to the rest of today's slate, meaning you're paying less for the same bet."
+  var sigKeys = Object.keys(sigs);
+  for (var ki = 0; ki < sigKeys.length; ki++) {
+    if ((sigs[sigKeys[ki]] || 0) > topVal) {
+      topVal = sigs[sigKeys[ki]];
+      topSig = sigKeys[ki];
+    }
+  }
+  var whyText = {
+    line_movement: 'Sharp line movement: the line has shifted toward this side since opening, suggesting professional money is backing it.',
+    fade_public:   'Fading the public: heavy public money is on the other side. Books shade lines for casual bettors, creating value against the crowd.',
+    juice_value:   'Juice value: the vig on this pick is favorable compared to the rest of the slate, meaning you are paying less for the same bet.'
   };
-  var whyPick = whyMap[topSig] || whyMap.juice_value;
+  var whyPick = whyText[topSig] || whyText.juice_value;
 
-  var html = '<div class="pick-card rank-' + p.rank + '">'
-    + '<div class="pick-top">'
-    +   '<div class="pick-sport-icon" style="background:' + color + '">' + icon + '</div>'
-    +   '<div class="pick-main">'
-    +     '<div class="pick-matchup">' + escHtml(p.away_team) + ' @ ' + escHtml(p.home_team) + ' · ' + sport + '</div>'
-    +     '<div class="pick-line">' + escHtml(p.pick_line || '') + '</div>'
-    +     '<div class="pick-time">' + time + '</div>'
-    +     '<div class="countdown" id="cd-' + pickId + '" data-time="' + (p.game_time||'') + '">calculating...</div>'
-    +   '</div>'
-    +   '<div class="pick-right">'
-    +     '<div class="conf-ring-wrap" data-conf="' + conf.toFixed(0) + '" data-color="' + clr + '">'
-    +       '<svg viewBox="0 0 56 56">'
-    +         '<circle class="conf-ring-bg" cx="28" cy="28" r="' + r + '"/>'
-    +         '<circle class="conf-ring-fill" cx="28" cy="28" r="' + r + '"'
-    +           ' stroke="' + clr + '"'
-    +           ' stroke-dasharray="' + circ.toFixed(1) + '"'
-    +           ' stroke-dashoffset="' + circ.toFixed(1) + '"'
-    +           ' data-target="' + gap + '"/>'
-    +       '</svg>'
-    +       '<div class="conf-ring-text" style="color:' + clr + '">' + conf.toFixed(0) + '%</div>'
-    +     '</div>'
-    +     '<div class="conf-ring-label">conf.</div>'
-    +   '</div>'
-    + '</div>'
-    + '<div class="pick-stats">'
-    +   '<div class="pick-stat">'
-    +     '<div class="s-val ' + evClass + '">' + evStr + '%</div>'
-    +     '<div class="tip-wrap"><div class="s-lbl">Edge</div>'
-    +       '<i class="tip-icon">?</i>'
-    +       '<div class="tip-box">How much more often we think this team wins vs. what the book implies. +5% = solid. +10%+ = strong signal.</div>'
-    +     '</div>'
-    +   '</div>'
-    +   '<div class="pick-stat">'
-    +     '<div class="s-val">' + oddsStr + '</div>'
-    +     '<div class="tip-wrap"><div class="s-lbl">Avg odds</div>'
-    +       '<i class="tip-icon">?</i>'
-    +       '<div class="tip-box">Average American odds across all books. Negative = favorite (bet $130 to win $100). Positive = underdog (bet $100 to win $130).</div>'
-    +     '</div>'
-    +   '</div>'
-    +   '<div class="pick-stat">'
-    +     '<div class="s-val">' + books + '</div>'
-    +     '<div class="tip-wrap"><div class="s-lbl">Books</div>'
-    +       '<i class="tip-icon">?</i>'
-    +       '<div class="tip-box">Number of sportsbooks used to calculate the average odds. More books = more reliable. 5+ is a strong sample.</div>'
-    +     '</div>'
-    +   '</div>'
-    + '</div>'
-    + '<div class="pick-signals">' + sigBars + '</div>'
-    + '<div class="why-pick">' + whyPick + '</div>'
-    + '<div class="pick-result-strip">'
-    +   resultHtml
-    +   '<button class="share-btn" onclick="sharePick(this,'' + pickLine + '',' + conf.toFixed(0) + ',' + ev.toFixed(1) + ')">'
-    +     '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M12 1L15 4L12 7M15 4H6M4 9v4a2 2 0 002 2h6a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-    +     ' Share'
-    +   '</button>'
-    + '</div>'
-    + '</div>';
-
-  return html;
+  // build html using an array and join — no quote nesting issues
+  var h = [];
+  h.push('<div class="pick-card rank-' + p.rank + '">');
+  h.push('<div class="pick-top">');
+  h.push('<div class="pick-sport-icon" style="background:' + color + '">' + icon + '</div>');
+  h.push('<div class="pick-main">');
+  h.push('<div class="pick-matchup">' + escHtml(p.away_team || '') + ' @ ' + escHtml(p.home_team || '') + ' &middot; ' + sport + '</div>');
+  h.push('<div class="pick-line">' + escHtml(p.pick_line || '') + '</div>');
+  h.push('<div class="pick-time">' + time + '</div>');
+  h.push('<div class="countdown" id="cd-' + pickId + '" data-time="' + (p.game_time || '') + '">calculating...</div>');
+  h.push('</div>');
+  h.push('<div class="pick-right">');
+  h.push('<div class="conf-ring-wrap" data-conf="' + conf.toFixed(0) + '" data-color="' + clr + '">');
+  h.push('<svg viewBox="0 0 56 56">');
+  h.push('<circle class="conf-ring-bg" cx="28" cy="28" r="' + r + '"/>');
+  h.push('<circle class="conf-ring-fill" cx="28" cy="28" r="' + r + '" stroke="' + clr + '" stroke-dasharray="' + circ + '" stroke-dashoffset="' + circ + '" data-target="' + gap + '"/>');
+  h.push('</svg>');
+  h.push('<div class="conf-ring-text" style="color:' + clr + '">' + conf.toFixed(0) + '%</div>');
+  h.push('</div>');
+  h.push('<div class="conf-ring-label">conf.</div>');
+  h.push('</div></div>');
+  h.push('<div class="pick-stats">');
+  h.push('<div class="pick-stat"><div class="s-val ' + evClass + '">' + evStr + '</div>');
+  h.push('<div class="tip-wrap"><div class="s-lbl">Edge</div><i class="tip-icon">?</i>');
+  h.push('<div class="tip-box">How much more often we think this team wins vs what the book implies. +5% is solid, +10% is a strong signal.</div></div></div>');
+  h.push('<div class="pick-stat"><div class="s-val">' + oddsStr + '</div>');
+  h.push('<div class="tip-wrap"><div class="s-lbl">Avg odds</div><i class="tip-icon">?</i>');
+  h.push('<div class="tip-box">Average American odds across all books. Negative means favorite, positive means underdog.</div></div></div>');
+  h.push('<div class="pick-stat"><div class="s-val">' + (p.num_books || 0) + '</div>');
+  h.push('<div class="tip-wrap"><div class="s-lbl">Books</div><i class="tip-icon">?</i>');
+  h.push('<div class="tip-box">Number of sportsbooks used. More books means a more reliable average. 5 or more is a strong sample.</div></div></div>');
+  h.push('</div>');
+  h.push('<div class="pick-signals">' + sigBars + '</div>');
+  h.push('<div class="why-pick">' + whyPick + '</div>');
+  h.push('<div class="pick-result-strip">');
+  h.push(resultHtml);
+  h.push('<button class="share-btn" id="share-' + pickId + '">');
+  h.push('<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M12 1L15 4L12 7M15 4H6M4 9v4a2 2 0 002 2h6a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Share');
+  h.push('</button>');
+  h.push('</div></div>');
+  return h.join('');
 }
 
 // ── load today's picks ────────────────────────────────────────
@@ -856,6 +843,24 @@ function animateRings() {
     }, 120);
   });
 }
+
+// ── share button event delegation ────────────────────────────
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.share-btn');
+  if (!btn) return;
+  var pickId = btn.id.replace('share-', '');
+  var pick = picksCache.find(function(p) { return p.id === pickId; });
+  if (!pick) return;
+  var text = 'EdgeIQ pick: ' + pick.pick_line + ' (' + Math.round(pick.confidence) + '% confidence, +' + pick.ev.toFixed(1) + '% edge) - edgeiqpicks.netlify.app';
+  navigator.clipboard.writeText(text).then(function() {
+    btn.classList.add('copied');
+    btn.textContent = 'Copied!';
+    setTimeout(function() {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M12 1L15 4L12 7M15 4H6M4 9v4a2 2 0 002 2h6a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Share';
+    }, 2000);
+  });
+});
 
 // ── boot ──────────────────────────────────────────────────────
 loadPicks();
