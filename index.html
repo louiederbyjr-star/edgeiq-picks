@@ -432,7 +432,7 @@ function renderPick(p) {
 
   var sigId = 'sig-' + (pickId || Math.random().toString(36).slice(2));
   var sigBars = '<div class="sig-chips">' + chips + '</div>'
-    + '<button class="sig-toggle" onclick="toggleSigBreakdown('' + sigId + '')">&#9660; show signal breakdown</button>'
+    + '<button class="sig-toggle" onclick="toggleSigBreakdown(&quot;' + sigId + '&quot;)">&#9660; show signal breakdown</button>'
     + '<div class="sig-breakdown hidden" id="' + sigId + '">' + breakdownRows + '</div>';
 
   // why this pick
