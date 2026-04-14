@@ -438,7 +438,7 @@ function renderPick(p) {
       + '</div>');
   }
 
-  h.push('<div class="matchup-context" id="ctx-' + pickId + '">' + buildContextHtml(p) + '</div>');
+  h.push('<div class="matchup-context" id="ctx-' + pickId + '"></div>');  // filled by loadTeamRecords
   h.push('</div>');
   h.push('<div class="pick-right">');
   h.push('<div class="conf-ring-wrap" data-conf="' + conf.toFixed(0) + '" data-color="' + clr + '">');
