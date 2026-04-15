@@ -1299,6 +1299,15 @@ function toggleSigBreakdown(id) {
   if (btn) btn.innerHTML = hidden ? '&#9660; show signal breakdown' : '&#9650; hide breakdown';
 }
 
+try {
+  document.addEventListener('click', function(e) {
+    try {
+      var btn = e.target.closest('[data-sig]');
+      if (btn) toggleSigBreakdown(btn.getAttribute('data-sig'));
+    } catch(e2) {}
+  });
+} catch(e) {}
+
 // ── boot ──────────────────────────────────────────────────────
 loadPicks();
 loadPerfSnap();
