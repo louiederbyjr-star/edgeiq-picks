@@ -585,7 +585,7 @@ function renderPick(p) {
   h.push('</div>');
   h.push('<div class="conf-ring-label">conf.</div>');
 
-  var trend = getConfTrend(pickId, conf);
+  var trend = getConfTrend(conf, p.prev_confidence);
   if (trend) {
     h.push('<div class="conf-trend ' + trend.cls + '">' + trend.arrow + ' ' + trend.label + '</div>');
   }
@@ -1059,12 +1059,9 @@ function getFreshness(createdAt) {
 
 // ── confidence trend ──────────────────────────────────────────────────
 var _prevConf = {};
-function getConfTrend(pickId, currentConf) {
-  if (!pickId) return null;
-  var prev = _prevConf[pickId];
-  _prevConf[pickId] = currentConf;
-  if (prev === undefined) return null;
-  var diff = currentConf - prev;
+function getConfTrend(currentConf, prevConf) {
+  if (prevConf === null || prevConf === undefined) return null;
+  var diff = currentConf - prevConf;
   if (diff > 0.5)  return { arrow: '&#9650;', cls: 'trend-up',   label: '+' + diff.toFixed(1) + '%' };
   if (diff < -0.5) return { arrow: '&#9660;', cls: 'trend-down', label: diff.toFixed(1) + '%' };
   return { arrow: '&#9644;', cls: 'trend-flat', label: 'steady' };
