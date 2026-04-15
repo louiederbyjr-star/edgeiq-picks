@@ -96,33 +96,11 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
 .tip-icon{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.12);color:var(--text3);font-size:9px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-style:normal;line-height:1}
 .tip-box{display:none;position:fixed;background:var(--ink);border:0.5px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text2);width:210px;line-height:1.5;z-index:999;pointer-events:none;font-family:var(--ff-body);font-weight:400;text-transform:none;letter-spacing:0;box-shadow:0 4px 20px rgba(0,0,0,.4)}
 .tip-wrap:hover .tip-box{display:block}
-.pick-signals{padding:12px 16px;border-top:0.5px solid var(--border);display:flex;flex-direction:column;gap:10px}
-.sig-chips{display:flex;flex-wrap:wrap;gap:6px}
-.sig-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-family:var(--ff-mono);font-weight:500;border:0.5px solid}
-.sig-chip.strong{background:rgba(200,241,53,.15);border-color:rgba(200,241,53,.3);color:var(--lime)}
-.sig-chip.medium{background:rgba(46,219,176,.1);border-color:rgba(46,219,176,.2);color:var(--teal)}
-.sig-chip.weak{background:rgba(255,255,255,.05);border-color:var(--border2);color:var(--text2)}
-.sig-chip-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.sig-chip.strong .sig-chip-dot{background:var(--lime)}
-.sig-chip.medium .sig-chip-dot{background:var(--teal)}
-.sig-chip.weak .sig-chip-dot{background:var(--text3)}
-.sig-breakdown{display:flex;flex-direction:column;gap:5px}
-.sig-row{display:flex;align-items:center;gap:8px}
-.sig-row-label{font-size:10px;color:var(--text3);font-family:var(--ff-mono);width:90px;flex-shrink:0}
-.sig-row-bar{flex:1;height:3px;background:var(--ink4);border-radius:2px;overflow:hidden}
-.sig-row-fill{height:100%;border-radius:2px;transition:width .8s ease}
-.sig-row-val{font-size:10px;color:var(--text3);font-family:var(--ff-mono);width:28px;text-align:right;flex-shrink:0}
-.sig-toggle{font-size:10px;color:var(--text3);cursor:pointer;font-family:var(--ff-mono);background:none;border:none;padding:0;margin-top:2px;text-align:left}
-.sig-toggle:hover{color:var(--text2)}
-.sig-breakdown.hidden{display:none}
-.freshness{font-size:10px;color:var(--text3);font-family:var(--ff-mono);margin-top:2px;display:flex;align-items:center;gap:4px}
-.freshness-dot{width:5px;height:5px;border-radius:50%;background:var(--lime);flex-shrink:0}
-.freshness-dot.stale{background:var(--text3)}
-.matchup-context{font-size:11px;color:var(--text2);margin-top:3px;font-family:var(--ff-mono);min-height:14px}
-.conf-trend{font-size:10px;font-family:var(--ff-mono);margin-top:2px;text-align:center}
-.trend-up{color:var(--lime)}
-.trend-down{color:var(--red)}
-.trend-flat{color:var(--text3)}
+.pick-signals{padding:10px 14px;border-top:0.5px solid var(--border);display:flex;gap:8px;flex-wrap:wrap}
+.sig-bar-wrap{flex:1;min-width:120px}
+.sig-label{font-size:10px;color:var(--text3);margin-bottom:4px;font-family:var(--ff-mono)}
+.sig-bar-bg{height:4px;background:var(--ink4);border-radius:2px;overflow:hidden}
+.sig-bar{height:100%;border-radius:2px;transition:width .8s ease}
 .pick-result-strip{padding:10px 16px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .result-badge{font-size:12px;font-family:var(--ff-mono);font-weight:500;padding:3px 12px;border-radius:20px}
 .result-win{background:var(--teal-bg);color:var(--teal)}
@@ -195,6 +173,35 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
 .lb-sort-row{display:flex;gap:6px;margin-bottom:12px}
 .sort-btn{font-size:12px;padding:5px 14px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:var(--ff-body);transition:all .15s}
 .sort-btn.on{background:var(--lime-bg);border-color:var(--lime-border);color:var(--lime)}
+
+.hist-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.hist-filter-btn{padding:5px 14px;border-radius:20px;font-size:12px;font-family:var(--ff-mono);border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer}
+.hist-filter-btn.active{background:var(--lime);color:#000;border-color:var(--lime)}
+.hist-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.hist-stat{background:var(--ink2);border:0.5px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.hist-stat-val{font-size:22px;font-weight:600;color:var(--lime);font-family:var(--ff-mono)}
+.hist-stat-lbl{font-size:10px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
+.hist-table{width:100%;border-collapse:collapse;font-size:12px}
+.hist-table th{font-size:10px;color:var(--text3);text-align:left;padding:8px 10px;border-bottom:0.5px solid var(--border);text-transform:uppercase;letter-spacing:.5px;font-weight:500}
+.hist-table td{padding:10px;border-bottom:0.5px solid var(--border2);vertical-align:middle}
+.hist-table tr:last-child td{border-bottom:none}
+.hist-table tr:hover td{background:var(--ink2)}
+.hist-result{display:inline-flex;align-items:center;justify-content:center;width:36px;height:20px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--ff-mono)}
+.hist-result.win{background:rgba(200,241,53,.2);color:var(--lime);border:0.5px solid rgba(200,241,53,.3)}
+.hist-result.loss{background:rgba(255,90,90,.15);color:#ff6b6b;border:0.5px solid rgba(255,90,90,.3)}
+.hist-result.push{background:rgba(255,255,255,.08);color:var(--text2);border:0.5px solid var(--border2)}
+.hist-result.pending{background:rgba(255,179,71,.1);color:var(--warn);border:0.5px solid rgba(255,179,71,.3)}
+.hist-pick-line{font-weight:500;color:var(--text1);font-size:13px}
+.hist-matchup{font-size:11px;color:var(--text3);margin-top:2px;font-family:var(--ff-mono)}
+.hist-odds{font-family:var(--ff-mono);font-size:12px}
+.hist-odds.pos{color:var(--lime)}
+.hist-odds.neg{color:var(--text2)}
+.hist-conf{font-family:var(--ff-mono);font-size:12px;color:var(--text2)}
+.hist-sport-icon{font-size:14px;margin-right:4px}
+.hist-empty{text-align:center;padding:40px;color:var(--text3);font-size:13px}
+.hist-score{font-family:var(--ff-mono);font-size:11px;color:var(--teal)}
+.hist-trend-up{color:var(--lime);font-size:10px;font-family:var(--ff-mono)}
+.hist-trend-down{color:#ff6b6b;font-size:10px;font-family:var(--ff-mono)}
 </style>
 </head>
 <body>
@@ -212,6 +219,7 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
     <button class="nav-tab active" onclick="showPage('picks',this)">Picks</button>
     <button class="nav-tab" onclick="showPage('leaderboard',this)">Board</button>
     <button class="nav-tab" onclick="showPage('submit',this)">Submit</button>
+    <button class="nav-tab" onclick="showPage('history',this)">History</button>
   </div>
   <div class="nav-right" id="win-rate-nav">—</div>
 </nav>
@@ -273,6 +281,30 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
   <div id="lb-empty" class="empty" style="display:none">
     <div class="icon">🏆</div>
     <p>No results submitted yet.<br>Be the first to submit a pick result!</p>
+  </div>
+</div>
+
+
+<!-- ══ HISTORY PAGE ══════════════════════════════════════════════ -->
+<div id="page-history" class="page" style="padding:16px">
+  <div class="hist-stats" id="hist-stats-row">
+    <div class="hist-stat"><div class="hist-stat-val" id="hs-record">—</div><div class="hist-stat-lbl">Record</div></div>
+    <div class="hist-stat"><div class="hist-stat-val" id="hs-winpct">—</div><div class="hist-stat-lbl">Win %</div></div>
+    <div class="hist-stat"><div class="hist-stat-val" id="hs-roi">—</div><div class="hist-stat-lbl">Avg EV</div></div>
+    <div class="hist-stat"><div class="hist-stat-val" id="hs-streak">—</div><div class="hist-stat-lbl">Streak</div></div>
+  </div>
+  <div class="hist-filters" id="hist-filters">
+    <button class="hist-filter-btn active" data-sport="all" onclick="histFilter(this)">All</button>
+    <button class="hist-filter-btn" data-sport="basketball_nba" onclick="histFilter(this)">NBA</button>
+    <button class="hist-filter-btn" data-sport="baseball_mlb" onclick="histFilter(this)">MLB</button>
+    <button class="hist-filter-btn" data-sport="icehockey_nhl" onclick="histFilter(this)">NHL</button>
+    <button class="hist-filter-btn" data-sport="americanfootball_nfl" onclick="histFilter(this)">NFL</button>
+    <button class="hist-filter-btn" data-result="win" onclick="histResultFilter(this)" style="margin-left:8px">Wins</button>
+    <button class="hist-filter-btn" data-result="loss" onclick="histResultFilter(this)">Losses</button>
+    <button class="hist-filter-btn" data-result="pending" onclick="histResultFilter(this)">Pending</button>
+  </div>
+  <div id="hist-table-wrap">
+    <div class="hist-empty">Loading history...</div>
   </div>
 </div>
 
@@ -348,6 +380,7 @@ function showPage(name, btn) {
   btn.classList.add('active');
   if (name === 'leaderboard') loadLeaderboard();
   if (name === 'submit') populatePickSelect();
+  if (name === 'history' && !_histAllPicks.length) loadHistory();
 }
 
 // ── toast ─────────────────────────────────────────────────────
@@ -405,47 +438,21 @@ function renderPick(p) {
   if (p.result === 'push') resultHtml = '<span class="result-badge result-push">&#8212; PUSH</span>';
 
   // signal bars
-  var SIG_META = {
-    line_movement: { label: 'Sharp money',   icon: '&#9651;',   desc: 'Line moved toward this side since opening' },
-    fade_public:   { label: 'Fade public',   icon: '&#128100;', desc: 'Public is heavy on the other side' },
-    juice_value:   { label: 'Value odds',    icon: '&#9675;',   desc: 'Favorable vig on this pick' },
-    weather:       { label: 'Weather edge',  icon: '&#127777;', desc: 'Game conditions favor this side' },
-    prop_signal:   { label: 'Prop signal',   icon: '&#128200;', desc: 'Player props suggest scoring environment favors this side' },
-    injury:        { label: 'Injury edge',   icon: '&#128138;', desc: 'Opponent has key players out or doubtful' },
-    book_disagree: { label: 'Book split',    icon: '&#9878;',   desc: 'Books disagree on this line — market inefficiency' },
-    rest_days:     { label: 'Rest edge',     icon: '&#9200;',   desc: 'This team has a rest advantage' },
-    clv:           { label: 'Line value',    icon: '&#9650;',   desc: 'Market has moved to validate this pick' },
-    no_vig_edge:   { label: 'True edge',     icon: '&#9670;',   desc: 'Best available odds beat the no-vig consensus price' },
-    reverse_line:  { label: 'Reverse line',  icon: '&#8645;',   desc: 'Line moved toward this side despite public betting the other way' },
-    steam_move:    { label: 'Steam move',    icon: '&#9889;',   desc: 'Multiple books moved rapidly together — sharp group detected' }
-  };
-
-  var chips = '';
-  var breakdownRows = '';
-  var sigKeys = Object.keys(SIG_META);
-  for (var sk = 0; sk < sigKeys.length; sk++) {
-    var key = sigKeys[sk];
-    var val = sigs[key] || 0;
-    var meta = SIG_META[key];
-    var chipClass = val >= 0.65 ? 'strong' : val >= 0.52 ? 'medium' : 'weak';
-    if (val >= 0.52) {
-      chips += '<span class="sig-chip ' + chipClass + '" title="' + meta.desc + '">'
-        + '<span class="sig-chip-dot"></span>'
-        + meta.icon + ' ' + meta.label + '</span>';
-    }
-    var fillColor = val >= 0.65 ? 'var(--lime)' : val >= 0.52 ? 'var(--teal)' : 'rgba(255,255,255,.2)';
-    breakdownRows += '<div class="sig-row">'
-      + '<div class="sig-row-label">' + meta.label + '</div>'
-      + '<div class="sig-row-bar"><div class="sig-row-fill" style="width:' + Math.round(val*100) + '%;background:' + fillColor + '"></div></div>'
-      + '<div class="sig-row-val">' + Math.round(val*100) + '</div>'
+  var sigEntries = [
+    ['Line move',   sigs.line_movement || 0],
+    ['Fade public', sigs.fade_public   || 0],
+    ['Juice value', sigs.juice_value   || 0],
+    ['Weather',     sigs.weather       || 0],
+    ['Prop signal', sigs.prop_signal   || 0]
+  ];
+  var sigBars = '';
+  for (var si = 0; si < sigEntries.length; si++) {
+    sigBars += '<div class="sig-bar-wrap">'
+      + '<div class="sig-label">' + sigEntries[si][0] + '</div>'
+      + '<div class="sig-bar-bg"><div class="sig-bar" style="width:'
+      + Math.round(sigEntries[si][1] * 100) + '%;background:var(--lime)"></div></div>'
       + '</div>';
   }
-  if (!chips) chips = '<span class="sig-chip weak"><span class="sig-chip-dot"></span>&#9675; Value odds</span>';
-
-  var sigId = 'sig-' + (pickId || Math.random().toString(36).slice(2));
-  var sigBars = '<div class="sig-chips">' + chips + '</div>'
-    + '<button class="sig-toggle" data-sig="' + sigId + '">&#9660; show signal breakdown</button>'
-    + '<div class="sig-breakdown hidden" id="' + sigId + '">' + breakdownRows + '</div>';
 
   // why this pick
   var topSig = 'juice_value';
@@ -462,14 +469,7 @@ function renderPick(p) {
     fade_public:   'Fading the public: heavy public money is on the other side. Books shade lines for casual bettors, creating value against the crowd.',
     juice_value:   'Juice value: the vig on this pick is favorable compared to the rest of the slate, meaning you are paying less for the same bet.',
     weather:       'Weather angle: game-time conditions such as wind, rain, or cold temperatures favor this side based on historical scoring patterns.',
-    prop_signal:   'Prop signal: player prop lines for this game suggest a scoring environment that favors this side of the bet.',
-    injury:        'Injury edge: the opponent has key players out or doubtful, giving this side a meaningful advantage.',
-    book_disagree: 'Book split: sportsbooks disagree on this line, indicating market inefficiency and potential value.',
-    rest_days:     'Rest edge: this team has more rest than their opponent, which historically improves performance.',
-    clv:           'Line value: the line has moved in favor of this pick since opening, validating the edge.',
-    no_vig_edge:   'True edge: the best available odds beat the no-vig consensus price, meaning genuine mathematical edge exists.',
-    reverse_line:  'Reverse line: despite public money on the other side, sharp bettors moved the line this way.',
-    steam_move:    'Steam move: multiple books moved rapidly together, indicating syndicate or sharp group action.'
+    prop_signal:   'Prop signal: player prop lines for this game suggest a scoring environment that favors this side of the bet.'
   };
   var whyPick = whyText[topSig] || whyText.juice_value;
 
@@ -505,7 +505,7 @@ function renderPick(p) {
   h.push('</div>');
   h.push('<div class="conf-ring-label">conf.</div>');
 
-  var trend = getConfTrend(conf, p.prev_confidence);
+  var trend = getConfTrend(pickId, conf);
   if (trend) {
     h.push('<div class="conf-trend ' + trend.cls + '">' + trend.arrow + ' ' + trend.label + '</div>');
   }
@@ -561,13 +561,9 @@ async function loadPicks() {
     document.getElementById('picks-container').innerHTML = picksCache.map(renderPick).join('');
     animateRings();
     updateCountdowns();
-    // load team records — one fetch per sport, non-blocking
-    var sportsDone = {};
+    // load team records in background — non-blocking
     picksCache.forEach(function(p) {
-      if (!sportsDone[p.sport]) {
-        sportsDone[p.sport] = true;
-        loadTeamRecords(p.sport, p.home_team, p.away_team, p.id);
-      }
+      loadTeamRecords(p.sport, p.home_team, p.away_team, p.id);
     });
     await populatePickSelect();
   } catch (e) {
@@ -982,10 +978,13 @@ function getFreshness(createdAt) {
 }
 
 // ── confidence trend ──────────────────────────────────────────────────
-// uses prev_confidence field stored in Supabase by afternoon rescore
-function getConfTrend(currentConf, prevConf) {
-  if (prevConf === null || prevConf === undefined) return null;
-  var diff = currentConf - prevConf;
+var _prevConf = {};
+function getConfTrend(pickId, currentConf) {
+  if (!pickId) return null;
+  var prev = _prevConf[pickId];
+  _prevConf[pickId] = currentConf;
+  if (prev === undefined) return null;
+  var diff = currentConf - prev;
   if (diff > 0.5)  return { arrow: '&#9650;', cls: 'trend-up',   label: '+' + diff.toFixed(1) + '%' };
   if (diff < -0.5) return { arrow: '&#9660;', cls: 'trend-down', label: diff.toFixed(1) + '%' };
   return { arrow: '&#9644;', cls: 'trend-flat', label: 'steady' };
@@ -995,7 +994,6 @@ function getConfTrend(currentConf, prevConf) {
 var _teamRecords = {};
 
 async function loadTeamRecords(sport, homeTeam, awayTeam, pickId) {
-  // use scoreboard endpoint — reliable, no slug issues
   var ESPN_SPORT_MAP = {
     basketball_nba:       'basketball/nba',
     americanfootball_nfl: 'football/nfl',
@@ -1005,51 +1003,159 @@ async function loadTeamRecords(sport, homeTeam, awayTeam, pickId) {
   var path = ESPN_SPORT_MAP[sport];
   if (!path) return;
 
-  // only fetch if we don't have records for both teams yet
-  var needsFetch = !(homeTeam in _teamRecords) || !(awayTeam in _teamRecords);
-  if (!needsFetch) {
-    updateContextDiv(pickId, homeTeam, awayTeam);
+  for (var i = 0; i < 2; i++) {
+    var team = i === 0 ? homeTeam : awayTeam;
+    if (team in _teamRecords) continue;
+    try {
+      var slug = team.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      var r = await fetch('https://site.api.espn.com/apis/site/v2/sports/' + path + '/teams/' + slug);
+      if (!r.ok) { _teamRecords[team] = null; continue; }
+      var d = await r.json();
+      var items = d && d.team && d.team.record && d.team.record.items;
+      if (items && items.length > 0) {
+        _teamRecords[team] = items[0].summary || null;
+      } else {
+        _teamRecords[team] = null;
+      }
+    } catch(e) { _teamRecords[team] = null; }
+  }
+  // update the context div on the card
+  var ctxEl = document.getElementById('ctx-' + pickId);
+  if (ctxEl) {
+    var homeRec = _teamRecords[homeTeam];
+    var awayRec = _teamRecords[awayTeam];
+    var parts = [];
+    if (awayRec) parts.push('<span style="color:var(--text3)">' + escHtml(awayTeam.split(' ').pop()) + '</span> ' + awayRec);
+    if (homeRec) parts.push('<span style="color:var(--text3)">' + escHtml(homeTeam.split(' ').pop()) + '</span> ' + homeRec);
+    ctxEl.innerHTML = parts.join(' &nbsp;&middot;&nbsp; ');
+  }
+}
+
+
+// ── history page ──────────────────────────────────────────────────────
+var _histAllPicks = [];
+var _histSportFilter = 'all';
+var _histResultFilter = 'all';
+
+async function loadHistory() {
+  try {
+    var r = await fetch(
+      SUPABASE_URL + '/rest/v1/picks?order=pick_date.desc,rank.asc&select=*&limit=200',
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+    );
+    _histAllPicks = await r.json();
+    renderHistory();
+  } catch(e) {
+    document.getElementById('hist-table-wrap').innerHTML = '<div class="hist-empty">Failed to load history.</div>';
+  }
+}
+
+function histFilter(btn) {
+  document.querySelectorAll('[data-sport]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  _histSportFilter = btn.getAttribute('data-sport');
+  renderHistory();
+}
+
+function histResultFilter(btn) {
+  var wasActive = btn.classList.contains('active');
+  document.querySelectorAll('[data-result]').forEach(b => b.classList.remove('active'));
+  if (!wasActive) {
+    btn.classList.add('active');
+    _histResultFilter = btn.getAttribute('data-result');
+  } else {
+    _histResultFilter = 'all';
+  }
+  renderHistory();
+}
+
+function renderHistory() {
+  var picks = _histAllPicks.filter(function(p) {
+    if (_histSportFilter !== 'all' && p.sport !== _histSportFilter) return false;
+    if (_histResultFilter !== 'all') {
+      var res = p.result || 'pending';
+      if (_histResultFilter === 'pending' && res !== null && res !== undefined && res !== 'pending') return false;
+      if (_histResultFilter !== 'pending' && res !== _histResultFilter) return false;
+    }
+    return true;
+  });
+
+  // compute stats from ALL picks (not filtered)
+  var graded  = _histAllPicks.filter(function(p){ return p.result === 'win' || p.result === 'loss'; });
+  var wins    = graded.filter(function(p){ return p.result === 'win'; }).length;
+  var losses  = graded.filter(function(p){ return p.result === 'loss'; }).length;
+  var winPct  = graded.length ? ((wins / graded.length) * 100).toFixed(1) : '—';
+  var avgEV   = _histAllPicks.length ? (_histAllPicks.reduce(function(s,p){ return s + (p.ev || 0); }, 0) / _histAllPicks.length).toFixed(1) : '—';
+
+  // streak
+  var streak = 0, streakType = '';
+  for (var i = 0; i < graded.length; i++) {
+    if (i === 0) { streakType = graded[i].result; streak = 1; }
+    else if (graded[i].result === streakType) streak++;
+    else break;
+  }
+  var streakLabel = streak > 0 ? (streakType === 'win' ? streak + 'W' : streak + 'L') : '—';
+
+  document.getElementById('hs-record').textContent  = wins + '-' + losses;
+  document.getElementById('hs-winpct').textContent  = winPct + (winPct !== '—' ? '%' : '');
+  document.getElementById('hs-roi').textContent     = avgEV !== '—' ? '+' + avgEV : '—';
+  document.getElementById('hs-streak').textContent  = streakLabel;
+
+  if (!picks.length) {
+    document.getElementById('hist-table-wrap').innerHTML = '<div class="hist-empty">No picks found for this filter.</div>';
     return;
   }
 
-  try {
-    var r = await fetch('https://site.api.espn.com/apis/site/v2/sports/' + path + '/scoreboard');
-    if (!r.ok) return;
-    var d = await r.json();
-    var events = d.events || [];
+  var SPORT_ICONS = { basketball_nba: '🏀', americanfootball_nfl: '🏈', baseball_mlb: '⚾', icehockey_nhl: '🏒', default: '🎯' };
+  var SPORT_NAMES = { basketball_nba: 'NBA', americanfootball_nfl: 'NFL', baseball_mlb: 'MLB', icehockey_nhl: 'NHL' };
 
-    // extract records for all teams in today's scoreboard
-    events.forEach(function(ev) {
-      var comps = (ev.competitions || [{}])[0];
-      (comps.competitors || []).forEach(function(c) {
-        var name = c.team && c.team.displayName;
-        var rec  = c.records && c.records[0] && c.records[0].summary;
-        if (name && !(name in _teamRecords)) {
-          _teamRecords[name] = rec || null;
-        }
-      });
-    });
+  var rows = picks.map(function(p) {
+    var result  = p.result || 'pending';
+    var resLabel = result === 'win' ? 'WIN' : result === 'loss' ? 'L' : result === 'push' ? 'PSH' : 'TBD';
+    var resCls  = result;
+    var odds    = p.odds || 0;
+    var oddsCls = odds >= 0 ? 'pos' : 'neg';
+    var oddsStr = odds >= 0 ? '+' + odds : '' + odds;
+    var icon    = SPORT_ICONS[p.sport] || SPORT_ICONS.default;
+    var sport   = SPORT_NAMES[p.sport] || p.sport;
+    var date    = p.pick_date ? p.pick_date.slice(5).replace('-', '/') : '';
 
-    // mark any team not found as null
-    if (!(homeTeam in _teamRecords)) _teamRecords[homeTeam] = null;
-    if (!(awayTeam in _teamRecords)) _teamRecords[awayTeam] = null;
+    // confidence trend
+    var trendHtml = '';
+    if (p.prev_confidence && p.confidence) {
+      var diff = p.confidence - p.prev_confidence;
+      if (diff > 0.5) trendHtml = ' <span class="hist-trend-up">&#9650;' + diff.toFixed(1) + '</span>';
+      else if (diff < -0.5) trendHtml = ' <span class="hist-trend-down">&#9660;' + Math.abs(diff).toFixed(1) + '</span>';
+    }
 
-    // update all pick cards for this sport
-    picksCache.forEach(function(p) {
-      if (p.sport === sport) updateContextDiv(p.id, p.home_team, p.away_team);
-    });
-  } catch(e) {}
-}
+    // top signal chip
+    var sigs = p.signals || {};
+    var topSig = Object.keys(sigs).reduce(function(a,b){ return (sigs[a]||0) > (sigs[b]||0) ? a : b; }, '');
+    var sigLabels = { line_movement:'Sharp money', fade_public:'Fade public', no_vig_edge:'True edge',
+      reverse_line:'Reverse line', steam_move:'Steam move', book_disagree:'Book split',
+      rest_days:'Rest edge', injury:'Injury edge', weather:'Weather', clv:'Line value',
+      prop_signal:'Props', juice_value:'Value odds' };
+    var sigHtml = topSig && sigs[topSig] > 0.55 ? '<span style="font-size:10px;color:var(--teal);font-family:var(--ff-mono)">' + (sigLabels[topSig]||topSig) + '</span>' : '';
 
-function updateContextDiv(pickId, homeTeam, awayTeam) {
-  var ctxEl = document.getElementById('ctx-' + pickId);
-  if (!ctxEl) return;
-  var homeRec = _teamRecords[homeTeam];
-  var awayRec = _teamRecords[awayTeam];
-  var parts = [];
-  if (awayRec) parts.push('<span style="color:var(--text3)">' + escHtml((awayTeam || '').split(' ').pop()) + '</span> ' + escHtml(awayRec));
-  if (homeRec) parts.push('<span style="color:var(--text3)">' + escHtml((homeTeam || '').split(' ').pop()) + '</span> ' + escHtml(homeRec));
-  if (parts.length) ctxEl.innerHTML = parts.join(' &nbsp;&middot;&nbsp; ');
+    return '<tr>'
+      + '<td style="color:var(--text3);font-family:var(--ff-mono);font-size:11px;white-space:nowrap">' + date + '</td>'
+      + '<td><div class="hist-pick-line">' + escHtml(p.pick_line || '') + trendHtml + '</div>'
+      +     '<div class="hist-matchup">' + icon + ' ' + escHtml((p.away_team||'').split(' ').pop()) + ' @ ' + escHtml((p.home_team||'').split(' ').pop()) + ' &middot; ' + sport + '</div>'
+      +     '<div style="margin-top:3px">' + sigHtml + '</div></td>'
+      + '<td class="hist-odds ' + oddsCls + '">' + oddsStr + '</td>'
+      + '<td class="hist-conf">' + (p.confidence||'—') + '%</td>'
+      + '<td style="font-family:var(--ff-mono);font-size:11px;color:var(--text3)">' + (p.ev ? '+' + p.ev.toFixed(1) : '—') + '</td>'
+      + '<td><span class="hist-result ' + resCls + '">' + resLabel + '</span></td>'
+      + '</tr>';
+  }).join('');
+
+  document.getElementById('hist-table-wrap').innerHTML =
+    '<table class="hist-table">'
+    + '<thead><tr>'
+    + '<th>Date</th><th>Pick</th><th>Odds</th><th>Conf</th><th>EV</th><th>Result</th>'
+    + '</tr></thead>'
+    + '<tbody>' + rows + '</tbody>'
+    + '</table>';
 }
 
 // ── signal breakdown toggle ───────────────────────────────────────────
@@ -1060,11 +1166,6 @@ function toggleSigBreakdown(id) {
   var hidden = el.classList.toggle('hidden');
   if (btn) btn.innerHTML = hidden ? '&#9660; show signal breakdown' : '&#9650; hide breakdown';
 }
-
-document.addEventListener('click', function(e) {
-  var btn = e.target.closest('[data-sig]');
-  if (btn) toggleSigBreakdown(btn.getAttribute('data-sig'));
-});
 
 // ── boot ──────────────────────────────────────────────────────
 loadPicks();
