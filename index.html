@@ -229,6 +229,14 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
 .perf-val.warn{color:var(--warn)}
 .perf-lbl{font-size:10px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
 .perf-sub{font-size:10px;color:var(--text3);font-family:var(--ff-mono);margin-top:2px}
+
+.slate-quality{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;font-size:12px;font-family:var(--ff-mono);margin-bottom:10px;border:0.5px solid}
+.slate-quality.strong{background:rgba(200,241,53,.1);border-color:rgba(200,241,53,.2);color:var(--lime)}
+.slate-quality.moderate{background:rgba(46,219,176,.08);border-color:rgba(46,219,176,.2);color:var(--teal)}
+.slate-quality.weak{background:rgba(255,255,255,.05);border-color:var(--border2);color:var(--text3)}
+.ev-positive{color:var(--lime)}
+.ev-negative{color:#ff6b6b}
+.ev-neutral{color:var(--text2)}
 </style>
 </head>
 <body>
@@ -682,6 +690,20 @@ async function loadPicks() {
     }
 
     document.getElementById('picks-container').style.display = 'block';
+    // slate quality based on avg EV
+    var gradedPicks = picksCache.filter(function(p){ return p.ev !== null && p.ev !== undefined; });
+    var avgEV = gradedPicks.length ? gradedPicks.reduce(function(s,p){return s+(p.ev||0);},0) / gradedPicks.length : 0;
+    var slateClass = avgEV >= 1.0 ? 'strong' : avgEV >= 0 ? 'moderate' : 'weak';
+    var slateLabel = avgEV >= 1.0 ? '&#9650; Strong signal day — multiple edges detected'
+                   : avgEV >= 0  ? '&#9644; Moderate signal day — some edge available'
+                   : '&#9660; Weak signal day — limited sharp signals today';
+    var slateEl = document.getElementById('slate-quality-banner');
+    if (slateEl) {
+      slateEl.className = 'slate-quality ' + slateClass;
+      slateEl.innerHTML = slateLabel;
+      slateEl.style.display = 'flex';
+    }
+
     document.getElementById('picks-container').innerHTML = picksCache.map(renderPick).join('');
     animateRings();
     updateCountdowns();
