@@ -306,6 +306,9 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
     <button class="sport-pill" data-sport="americanfootball_nfl" onclick="filterSport(this)">🏈 NFL</button>
     <button class="sport-pill" data-sport="baseball_mlb" onclick="filterSport(this)">⚾ MLB</button>
     <button class="sport-pill" data-sport="icehockey_nhl" onclick="filterSport(this)">🏒 NHL</button>
+    <button class="sport-pill" data-sport="soccer_usa_mls" onclick="filterSport(this)">⚽ MLS</button>
+    <button class="sport-pill" data-sport="basketball_ncaab" onclick="filterSport(this)">🏀 NCAAB</button>
+    <button class="sport-pill" data-sport="americanfootball_ncaaf" onclick="filterSport(this)">🏈 NCAAF</button>
   </div>
 
   <div id="yesterday-banner" style="display:none" class="yesterday-banner">
@@ -430,7 +433,10 @@ const SPORT_COLORS = {
   americanfootball_nfl:"rgba(200,241,53,.08)",
   baseball_mlb:"rgba(46,219,176,.1)",
   icehockey_nhl:"rgba(100,150,255,.1)",
-  default:"rgba(255,255,255,.07)"
+  soccer_usa_mls:"rgba(50,200,150,.12)",
+  basketball_ncaab:"rgba(200,130,50,.12)",
+  americanfootball_ncaaf:"rgba(80,120,210,.12)",
+  default:"rgba(200,241,53,.08)"
 };
 
 let picksCache = [];
@@ -1293,7 +1299,7 @@ function renderHistory() {
     return;
   }
 
-  var SPORT_ICONS = { basketball_nba: '🏀', americanfootball_nfl: '🏈', baseball_mlb: '⚾', icehockey_nhl: '🏒', default: '🎯' };
+  var SPORT_ICONS = { basketball_nba: '🏀', americanfootball_nfl: '🏈', baseball_mlb: '⚾', icehockey_nhl: '🏒', soccer_usa_mls: '⚽', basketball_ncaab: '🏀', americanfootball_ncaaf: '🏈', default: '🎯' };
   var SPORT_NAMES = { basketball_nba: 'NBA', americanfootball_nfl: 'NFL', baseball_mlb: 'MLB', icehockey_nhl: 'NHL' };
 
   var rows = picks.map(function(p) {
