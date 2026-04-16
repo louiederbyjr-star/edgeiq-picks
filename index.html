@@ -79,6 +79,9 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
 .sport-pill{padding:5px 14px;border-radius:20px;border:0.5px solid var(--border2);font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--text2);transition:all .15s;font-family:var(--ff-body)}
 .sport-pill.on{background:var(--lime);color:var(--ink);border-color:var(--lime)}
 .countdown{font-size:11px;font-family:var(--ff-mono);color:var(--text3);margin-top:3px}
+.date-toggle{display:flex;gap:4px;background:var(--ink3);border-radius:8px;padding:3px}
+.date-toggle-btn{padding:5px 14px;border-radius:6px;font-size:12px;cursor:pointer;color:var(--text2);border:none;background:transparent;font-family:var(--ff-mono);transition:all .15s}
+.date-toggle-btn.active{background:var(--lime);color:#000}
 .freshness{font-size:10px;color:var(--text3);font-family:var(--ff-mono);margin-top:2px;display:flex;align-items:center;gap:4px}
 .freshness-dot{width:5px;height:5px;border-radius:50%;background:var(--lime);flex-shrink:0}
 .freshness-dot.stale{background:var(--text3)}
@@ -113,6 +116,8 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
 .sig-row-fill{height:100%;border-radius:2px;transition:width .8s ease}
 .sig-row-val{font-size:10px;color:var(--text3);font-family:var(--ff-mono);width:28px;text-align:right;flex-shrink:0}
 .sig-toggle{font-size:10px;color:var(--text3);cursor:pointer;font-family:var(--ff-mono);background:none;border:none;padding:0;margin-top:2px;text-align:left}
+.dk-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:6px;font-size:11px;font-family:var(--ff-mono);font-weight:600;background:rgba(255,179,71,.12);border:0.5px solid rgba(255,179,71,.3);color:var(--warn);margin-top:4px}
+.dk-badge-label{font-size:9px;color:var(--text3);font-weight:400;margin-left:2px;text-transform:uppercase;letter-spacing:.4px}
 .sig-toggle:hover{color:var(--text2)}
 .sig-breakdown.hidden{display:none}
 .pick-result-strip{padding:10px 16px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
@@ -217,7 +222,7 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
 .hist-trend-up{color:var(--lime);font-size:10px;font-family:var(--ff-mono)}
 .hist-trend-down{color:#ff6b6b;font-size:10px;font-family:var(--ff-mono)}
 
-.perf-snap{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0 14px}
+.perf-snap{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0 14px}
 .perf-card{background:var(--ink2);border:0.5px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
 .perf-val{font-size:20px;font-weight:600;font-family:var(--ff-mono);color:var(--lime)}
 .perf-val.neutral{color:var(--text2)}
@@ -258,6 +263,14 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
     </div>
   </div>
 
+  <!-- date toggle -->
+  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+    <div class="date-toggle" id="date-toggle">
+      <button class="date-toggle-btn active" id="btn-today" onclick="switchDate('today',this)">Today</button>
+      <button class="date-toggle-btn" id="btn-tomorrow" onclick="switchDate('tomorrow',this)">Tomorrow</button>
+    </div>
+  </div>
+
   <!-- performance snapshot -->
   <div class="perf-snap" id="perf-snap">
     <div class="perf-card">
@@ -279,6 +292,11 @@ body{background:var(--ink);color:var(--text);font-family:var(--ff-body);font-siz
       <div class="perf-val neutral" id="perf-avg-ev">—</div>
       <div class="perf-lbl">Avg edge</div>
       <div class="perf-sub">expected value</div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-val neutral" id="perf-units">—</div>
+      <div class="perf-lbl">Total units</div>
+      <div class="perf-sub">1u per pick</div>
     </div>
   </div>
 
@@ -601,6 +619,12 @@ function renderPick(p) {
   h.push('<div class="tip-wrap"><div class="s-lbl">Books</div><i class="tip-icon">?</i>');
   h.push('<div class="tip-box">Number of sportsbooks used. More books means a more reliable average. 5 or more is a strong sample.</div></div></div>');
   h.push('</div>');
+
+  if (p.dk_odds !== null && p.dk_odds !== undefined) {
+    var dkStr = p.dk_odds >= 0 ? '+' + p.dk_odds : '' + p.dk_odds;
+    h.push('<div class="dk-badge">DK&nbsp;' + dkStr + '<span class="dk-badge-label">&nbsp;DraftKings</span></div>');
+  }
+
   h.push('<div class="pick-signals">' + sigBars + '</div>');
   h.push('<div class="why-pick">' + whyPick + '</div>');
   h.push('<div class="pick-result-strip">');
@@ -613,14 +637,26 @@ function renderPick(p) {
 }
 
 // ── load today's picks ────────────────────────────────────────
+var _currentPickDate = new Date().toISOString().slice(0, 10);
+
+function switchDate(which, btn) {
+  document.querySelectorAll('.date-toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  var tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0,10);
+  _currentPickDate = which === 'tomorrow' ? tomorrow : new Date().toISOString().slice(0,10);
+  document.getElementById('picks-container').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3)">Loading...</div>';
+  loadPicks();
+}
+
 async function loadPicks() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = _currentPickDate;
+  var displayDate = new Date(today + 'T12:00:00');
   document.getElementById('today-date').textContent =
-    new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+    displayDate.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
 
   try {
     const _lp = await fetch(
-      SUPABASE_URL + '/rest/v1/picks?pick_date=eq.' + today + '&order=rank.asc&select=*',
+      SUPABASE_URL + '/rest/v1/picks?pick_date=eq.' + _currentPickDate + '&order=rank.asc&select=*',
       { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
     );
     const data = await _lp.json();
@@ -1113,7 +1149,7 @@ async function loadTeamRecords(sport, homeTeam, awayTeam, pickId) {
 async function loadPerfSnap() {
   try {
     var r = await fetch(
-      SUPABASE_URL + '/rest/v1/picks?select=result,ev,confidence,pick_date&order=pick_date.desc&limit=200',
+      SUPABASE_URL + '/rest/v1/picks?select=result,ev,confidence,pick_date,odds&order=pick_date.desc&limit=200',
       { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
     );
     var picks = await r.json();
@@ -1158,6 +1194,23 @@ async function loadPerfSnap() {
     }
 
     if (avgEV) document.getElementById('perf-avg-ev').textContent = '+' + avgEV + '%';
+
+    // units calculation: 1u per pick
+    var units = 0;
+    graded.forEach(function(p) {
+      var odds = p.odds || -110;
+      if (p.result === 'win') {
+        units += odds >= 0 ? (odds / 100) : (100 / Math.abs(odds));
+      } else if (p.result === 'loss') {
+        units -= 1;
+      }
+    });
+    var unitsEl = document.getElementById('perf-units');
+    if (graded.length) {
+      var unitsStr = (units >= 0 ? '+' : '') + units.toFixed(1) + 'u';
+      unitsEl.textContent  = unitsStr;
+      unitsEl.className    = 'perf-val ' + (units >= 0 ? '' : 'warn');
+    }
     if (oldestDate) document.getElementById('perf-since').textContent = 'since ' + oldestDate.slice(5).replace('-','/');
     document.getElementById('perf-graded').textContent = graded.length + ' graded picks';
 
@@ -1311,6 +1364,25 @@ try {
 // ── boot ──────────────────────────────────────────────────────
 loadPicks();
 loadPerfSnap();
+
+// check if tomorrow picks exist — show toggle if so
+(async function() {
+  var tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0,10);
+  try {
+    var r = await fetch(
+      SUPABASE_URL + '/rest/v1/picks?pick_date=eq.' + tomorrow + '&select=id&limit=1',
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+    );
+    var d = await r.json();
+    if (d && d.length > 0) {
+      document.getElementById('date-toggle').style.display = 'flex';
+    } else {
+      document.getElementById('date-toggle').style.display = 'none';
+    }
+  } catch(e) {
+    document.getElementById('date-toggle').style.display = 'none';
+  }
+})();
 loadWinRate();
 loadYesterday();
 </script>
