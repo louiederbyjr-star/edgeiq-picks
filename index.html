@@ -515,7 +515,8 @@ function renderPick(p) {
     clv:           { label: 'Line value',    icon: '&#9650;',   desc: 'Market has moved to validate this pick' },
     no_vig_edge:   { label: 'True edge',     icon: '&#9670;',   desc: 'Best available odds beat the no-vig consensus price' },
     reverse_line:  { label: 'Reverse line',  icon: '&#8645;',   desc: 'Line moved toward this side despite public betting the other way' },
-    steam_move:    { label: 'Steam move',    icon: '&#9889;',   desc: 'Multiple books moved rapidly together — sharp group detected' }
+    steam_move:    { label: 'Steam move',    icon: '&#9889;',   desc: 'Multiple books moved rapidly together — sharp group detected' },
+    team_form:     { label: 'Team quality',  icon: '&#9733;',   desc: 'This team has a strong winning record this season' }
   };
 
   var chips = '';
@@ -567,7 +568,8 @@ function renderPick(p) {
     clv:           'Line value: the line has moved in favor of this pick since opening, validating the edge.',
     no_vig_edge:   'True edge: the best available odds beat the no-vig consensus price, meaning genuine mathematical edge exists.',
     reverse_line:  'Reverse line: despite public money on the other side, sharp bettors moved the line this way.',
-    steam_move:    'Steam move: multiple books moved rapidly together, indicating syndicate or sharp group action.'
+    steam_move:    'Steam move: multiple books moved rapidly together, indicating syndicate or sharp group action.',
+    team_form:     'Team quality: this team has a strong winning record this season, giving them a genuine edge over their opponent.'
   };
   var whyPick = whyText[topSig] || whyText.juice_value;
 
